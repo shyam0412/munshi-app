@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Munshi setup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,650&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F4F6F9;--surface:#fff;--ink:#101B3D;--ink2:#4A5578;--ink3:#7B85A3;--rule:#DCE1EB;--wash:#E9EDF4;--gain:#0B7A55;--loss:#B42318;--warn:#A8690B;--focus:#3457D5}
+@media (prefers-color-scheme:dark){:root{--paper:#0D1224;--surface:#151B33;--ink:#EEF1F8;--ink2:#B3BBD3;--ink3:#8690AE;--rule:#28304F;--wash:#1D2440;--gain:#3FC293;--loss:#FF7A6B;--warn:#F0B347;--focus:#8FA8FF}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 15px/1.55 "IBM Plex Sans",system-ui,sans-serif}
+main{max-width:680px;margin:0 auto;padding:40px 20px 80px}
+h1{font:650 34px/1.1 "Bricolage Grotesque",system-ui,sans-serif;letter-spacing:-.02em;margin:0 0 8px}
+.lede{color:var(--ink2);margin:0 0 28px}
+ol.steps{list-style:none;margin:0;padding:0;counter-reset:s}
+ol.steps>li{counter-increment:s;background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:20px 20px 20px 62px;margin-bottom:14px;position:relative}
+ol.steps>li::before{content:counter(s);position:absolute;left:20px;top:20px;width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--paper);font-weight:600;font-size:14px;display:grid;place-items:center}
+h2{font-size:17px;font-weight:600;margin:1px 0 6px}
+p{margin:0 0 10px;color:var(--ink2)}
+pre{background:var(--wash);border-radius:9px;padding:12px 14px;overflow-x:auto;font:13px/1.5 ui-monospace,Menlo,Consolas,monospace;margin:0 0 10px;white-space:pre-wrap;word-break:break-all;color:var(--ink)}
+button,.btn{font:inherit;font-weight:600;border:0;background:var(--ink);color:var(--paper);border-radius:9px;padding:9px 15px;cursor:pointer;text-decoration:none;display:inline-block}
+button.ghost{background:none;color:var(--ink);box-shadow:inset 0 0 0 1px var(--rule)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+input{width:100%;font:inherit;border:1px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:9px;padding:9px 12px;margin-bottom:10px}
+details{border-top:1px solid var(--rule);padding:9px 0}
+details:last-of-type{padding-bottom:0}
+summary{cursor:pointer;font-weight:500}
+details p{margin:8px 0 4px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.status{list-style:none;margin:0;padding:0}
+.status li{display:grid;grid-template-columns:12px 1fr;gap:10px;padding:8px 0;border-top:1px solid var(--rule);align-items:start}
+.status li:first-child{border-top:0}
+.status i{width:10px;height:10px;border-radius:50%;margin-top:7px;background:var(--ink3)}
+.ok i{background:var(--gain)}.warn i{background:var(--warn)}.bad i{background:var(--loss)}
+.status b{display:block;font-weight:600}
+.status span{color:var(--ink2);font-size:14px}
+code{font:13px ui-monospace,Menlo,Consolas,monospace;background:var(--wash);padding:1px 5px;border-radius:4px}
+.said{font-size:13px;color:var(--gain);font-weight:500}
+</style>
+</head>
+<body>
+<main>
+<h1>Set up Munshi</h1>
+<p class="lede">Three steps. After the first one, Munshi starts recording what visitors do on your website.</p>
+<div id="gate"></div>
+<ol class="steps" id="steps" hidden>
+  <li>
+    <h2>Paste one line into your website</h2>
+    <p>It goes just before <code>&lt;/head&gt;</code> on every page.</p>
+    <pre id="snippet"></pre>
+    <div class="row"><button type="button" id="copy">Copy the line</button><span class="said" id="copied" hidden>Copied</span></div>
+    <div style="margin-top:14px">
+      <details><summary>WordPress</summary><p>Install the free plugin “WPCode”. Open Code Snippets, then Header &amp; Footer. Paste the line into Header and save.</p></details>
+      <details><summary>Shopify</summary><p>Online Store, Themes, the three dots next to your theme, Edit code. Open <code>theme.liquid</code> and paste the line just above <code>&lt;/head&gt;</code>. Save.</p></details>
+      <details><summary>Wix, Webflow, Framer, Squarespace</summary><p>Open site settings and look for “Custom code”. Add the line to the head of all pages and publish.</p></details>
+      <details><summary>Next.js or React</summary><p>Next.js: add it inside <code>&lt;head&gt;</code> in <code>app/layout</code>. React with Vite or CRA: paste it into <code>index.html</code>. Page changes inside the app are followed automatically.</p></details>
+      <details><summary>Plain HTML</summary><p>Paste it above <code>&lt;/head&gt;</code> in every page, then upload.</p></details>
+    </div>
+  </li>
+  <li>
+    <h2>Turn on your panel</h2>
+    <p>Type your website address and open the link once in each browser you use. From then on Munshi sits on the right edge of your site, only for you, and your own visits stop being counted.</p>
+    <label for="siteurl" style="position:absolute;left:-9999px">Your website address</label>
+    <input id="siteurl" placeholder="yourwebsite.com" autocomplete="url" inputmode="url">
+    <pre id="ownerlink">Type your website address above.</pre>
+    <div class="row"><a class="btn" id="openowner" href="#" target="_blank" rel="noopener" hidden>Open my site with Munshi</a><a class="btn" id="dash" href="#" style="background:none;color:var(--ink);box-shadow:inset 0 0 0 1px var(--rule)">Open the full dashboard</a></div>
+    <p style="margin-top:10px;font-size:14px">Keep this link private. Anyone who has it can see your numbers.</p>
+  </li>
+  <li>
+    <h2>Tell Munshi what counts as a win</h2>
+    <p>Sign-up forms with a password field are recognised on their own. For anything else, pick whichever is easiest:</p>
+    <details><summary>A button counts as a win</summary><p>Add <code>data-munshi-goal="signup"</code> to the button or link. Use <code>purchase</code> for a sale.</p><pre>&lt;button data-munshi-goal="signup"&gt;Create account&lt;/button&gt;</pre></details>
+    <details><summary>Reaching a page counts as a win</summary><p>If people land on a page like <code>/welcome</code> or <code>/thank-you</code> after they sign up or pay, tell Claude the address and it is added to <code>munshi.config.js</code>. Pages named thank-you, order-confirmed or payment-success already count as a sale.</p></details>
+    <details><summary>Payments, when you add them</summary><p>Your developer adds one call where the payment succeeds and one where it fails:</p><pre>munshi('purchase', { value: 499 })
+munshi('payment_failed', { reason: 'card declined' })</pre></details>
+  </li>
+</ol>
+<p id="ext" hidden style="margin-top:18px;font-size:14px">Optional: to keep Munshi beside any tab, not only your own site, <a href="/munshi-extension.zip" style="color:var(--focus)">download the Chrome side panel</a>. Unzip it, open <code>chrome://extensions</code>, switch on Developer mode, press “Load unpacked” and choose the folder.</p>
+<div id="health" hidden>
+  <h2 style="margin:28px 0 10px">Is everything working?</h2>
+  <ul class="status" id="status"><li><i></i><div><b>Checking…</b></div></li></ul>
+  <div class="row" style="margin-top:12px"><button type="button" class="ghost" id="recheck">Check again</button><button type="button" class="ghost" id="aitest">Test the AI</button></div>
+</div>
+</main>
+<script>
+(function () {
+  var H = new URLSearchParams(location.hash.slice(1));
+  var key = H.get('k') || (function () { try { return localStorage.getItem('munshi_key'); } catch (e) { return ''; } })() || '';
+  var gate = document.getElementById('gate');
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  if (!key) { gate.innerHTML = '<p>Open this page from your private setup link (it ends with <code>#k=…</code>).</p>'; return; }
+  try { localStorage.setItem('munshi_key', key); } catch (e) {}
+  document.getElementById('steps').hidden = false; document.getElementById('health').hidden = false; document.getElementById('ext').hidden = false;
+  var snippet = '<script async src="' + location.origin + '/m.js"><\/script>';
+  document.getElementById('snippet').textContent = snippet;
+  document.getElementById('copy').addEventListener('click', function () {
+    (navigator.clipboard ? navigator.clipboard.writeText(snippet) : Promise.reject()).catch(function () { var r = document.createRange(); r.selectNodeContents(document.getElementById('snippet')); var s = getSelection(); s.removeAllRanges(); s.addRange(r); try { document.execCommand('copy'); } catch (e) {} }).then(function () { var c = document.getElementById('copied'); c.hidden = false; setTimeout(function () { c.hidden = true; }, 2000); });
+  });
+  document.getElementById('dash').href = '/panel#k=' + encodeURIComponent(key);
+  var inp = document.getElementById('siteurl'), out = document.getElementById('ownerlink'), open = document.getElementById('openowner');
+  try { inp.value = localStorage.getItem('munshi_site') || ''; } catch (e) {}
+  function upd() {
+    var v = inp.value.trim().replace(/^https?:\/\//i, '').replace(/\/.*$/, '');
+    if (!v || v.indexOf('.') < 0) { out.textContent = 'Type your website address above.'; open.hidden = true; return; }
+    var link = 'https://' + v + '/?munshi=' + encodeURIComponent(key);
+    out.textContent = link; open.href = link; open.hidden = false;
+    try { localStorage.setItem('munshi_site', v); } catch (e) {}
+  }
+  inp.addEventListener('input', upd); upd();
+
+  var st = document.getElementById('status');
+  function row(cls, title, text) { return '<li class="' + cls + '"><i></i><div><b>' + esc(title) + '</b><span>' + text + '</span></div></li>'; }
+  function check(withAi) {
+    Promise.all([
+      fetch('/api/health' + (withAi ? '?ai=1' : ''), { headers: { 'x-munshi-key': key } }).then(function (r) { if (r.status === 401) throw new Error('key'); return r.json(); }),
+      fetch('/api/stats?range=7d', { headers: { 'x-munshi-key': key } }).then(function (r) { return r.json(); })
+    ]).then(function (res) {
+      var h = res[0], s = res[1], rows = '';
+      var seen = s.site && s.site.everSeen;
+      rows += seen ? row('ok', 'Receiving visits', esc(s.totals.visits) + ' visits recorded in the last 7 days' + (s.site.name ? ' from ' + esc(s.site.name) : '') + '.')
+                   : row('warn', 'No visits received yet', 'Finish step 1, then open your site in a private window. It should appear here within a minute. Your own browser is not counted after step 2.');
+      if (h.storage === 'blob') rows += h.blobOk === false ? row('bad', 'Permanent storage has a problem', esc(h.blobError || '') + ' The Blob store must be created as Private.') : row('ok', 'Data is saved permanently', 'Stored in your own Vercel Blob store. Saved about every 30 minutes while there is traffic; the newest visits are shown live in between.');
+      else rows += row('warn', 'Data is in temporary storage', 'Munshi works now, but Vercel can clear this storage. To keep history for good: in Vercel open this project, go to Storage, create a <b style="display:inline">Blob</b> store set to <b style="display:inline">Private</b>, connect it to this project, then redeploy.');
+      if (h.cacheOk === false) rows += row('bad', 'Live storage is not responding', esc(h.cacheError || 'Runtime Cache did not return the test value.'));
+      if (withAi) rows += h.aiOk ? row('ok', 'AI is answering', 'It said: “' + esc(h.aiTest) + '”') : row('bad', 'AI did not answer', esc(h.aiError || '') + ' In Vercel, open AI Gateway and turn it on for your account, or add an <code>ANTHROPIC_API_KEY</code> environment variable. The numbers and the problem list work without it.');
+      else rows += h.ai ? row('', 'AI connection found', 'Press “Test the AI” to confirm it answers.') : row('warn', 'AI is not connected', 'The numbers and the problem list work without it. The question box needs it.');
+      if (h.lastError) rows += row('bad', 'Last error', esc(h.lastError.where + ': ' + h.lastError.message));
+      st.innerHTML = rows;
+    }).catch(function (e) { st.innerHTML = row('bad', e.message === 'key' ? 'This key was not accepted' : 'Could not reach Munshi', 'Open this page from your private setup link.'); });
+  }
+  document.getElementById('recheck').addEventListener('click', function () { check(false); });
+  document.getElementById('aitest').addEventListener('click', function () { st.innerHTML = row('', 'Asking the AI…', ''); check(true); });
+  check(false);
+})();
+</script>
+</body>
+</html>

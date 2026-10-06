@@ -1,0 +1,11 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
+  "regions": ["bom1"],
+  "functions": { "api/*.js": { "maxDuration": 60 } },
+  "crons": [{ "path": "/api/cron", "schedule": "35 18 * * *" }],
+  "headers": [
+    { "source": "/m.js", "headers": [{ "key": "Cache-Control", "value": "public, max-age=300, s-maxage=300" }, { "key": "Access-Control-Allow-Origin", "value": "*" }] },
+    { "source": "/panel", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] }
+  ]
+}
